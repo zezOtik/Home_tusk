@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import random
+import math
 
 def port(self):#считывания из файла значения
     p = open(self,'r',encoding = 'utf-8')
@@ -13,14 +14,13 @@ def port(self):#считывания из файла значения
     return n,m
 
     
-def generate_lab_step_one(size_n,size_m):#нужно переписать проверку на полученную рандомное значение, если рандом привел нас втупик, выбросить нужно число
-    labirint_vol_1 = dict()#создали хэш таблицу
-    labirint_vol_1 = {i: 11 for i in range(size_n*size_m)}#забили ее 11
+def generate_lab_step_one(labirint_main,labirint_posetil,labirint_ne_posetil,size_n, size_m):#нужно переписать проверку на полученную рандомное значение, если рандом привел нас втупик, выбросить нужно число
+    
+    labirint_ne_posetil.pop(0)
+
+    labirint_posetil[0] = 1
 
     s = []#переменная для считывания значений функции
-
-    feiklab_st_1 = dict()#хэш-таблица для посещенных
-    feiklab_st_1[0] = 1#отметили 0 -  посещенной
     
     i = 0#старт работы алгоритма
     j = 0
@@ -28,30 +28,71 @@ def generate_lab_step_one(size_n,size_m):#нужно переписать про
     
     while(i != size_n * size_m - 1 ):#пока не равны значения работать
         #проверка на возможную ошибку 
-        s = randomstep(feiklab_st_1,i,j,size_n,size_m)
+        s = randomstep(labirint_posetil,i,size_n,size_m)
         i = int(s[0])
         j = int(s[1])
         if j != 0:           
-            brok_wall(labirint_vol_1, size_n, size_m, i, j)
-            feiklab_st_1[i] = 1
-            i = proverka_i_ogo(labirint_vol_1,i,size_n,size_m,feiklab_st_1)
+            brok_wall(labirint_main, size_n, size_m, i, j)
+            labirint_posetil[i] = 1
+            labirint_ne_posetil.pop(i)
+            i = proverka_i_ogo(labirint_main,i,size_n,size_m,labirint_posetil)
         else:
-            i = proverka_i_ogo(labirint_vol_1,i,size_n,size_m,feiklab_st_1)
+            i = proverka_i_ogo(labirint_main,i,size_n,size_m,labirint_posetil)
 
-    return (labirint_vol_1,feiklab_st_1)   
-
-
-def step_2(labirint,feiklab):
+    return labirint_main,labirint_posetil,labirint_ne_posetil
     
 
 
-def randominfeik(feiklab,i):
+def step_2(labirint,feiklab,labirint_ex,size_n,size_m):
+    s = []
+    if kolvo_elem(labirint_ex) != 0:
+        
+        random_kol = math.trunc(math.sqrt(kolvo_elem(feiklab)))
+
+        while(random_kol != 0):
+            i = randominfeik(feiklab)
+            
+            i = proverka_sosed(feiklab,i,size_n,size_m)
+
+            while(i != -1):
+                
+                s = randomstep(feiklab,i,size_n,size_m)
+                i = int(s[0])
+                j = int(s[1])
+
+                brok_wall(labirint, size_n, size_m, i, j)
+
+                feiklab[i] = 1
+
+                if labirint_ex.get(i) == None:
+                    return 1
+                else:
+                    labirint_ex.pop(i)
+                i = proverka_sosed(feiklab,i,size_n,size_m)
+            random_kol -= 1
+        return labirint,feiklab,labirint_ex
+    else:
+        return labirint,feiklab,labirint_ex
+
+
+#def step_3(labirint,feiklab,labirint_ex,size_n,size_m):
+    
+
+
+def kolvo_elem(hashtable):
+    kol_vo = len(list(hashtable.keys()))-1
+
+    return kol_vo
+    
+
+
+def randominfeik(feiklab):#Вывод рандомной уже посещенной клетки
     p = random.randint(0,len(list(feiklab.keys()))-1)
     i = list(feiklab.keys())[p]
     return i
 
 
-def randomstep(feiklab,i,j,n,m):
+def randomstep(feiklab,i,n,m):#По входящим данным выбирает куда следует стрелка пробивания стенок.
     
     #проверил(0,1,1,1)
     if (((i % m == 0) or feiklab.get(i-1) != None)
@@ -122,7 +163,7 @@ def randomstep(feiklab,i,j,n,m):
           and (i % m == m-1 or feiklab.get(i+1) != None)
           and ((i+m) > n*m -1 or feiklab.get(i+m) != None)):
             j = 0
-            i = int(randominfeik(feiklab,i))
+            i = int(randominfeik(feiklab))
             return i,j
 
     #(1000)
@@ -175,7 +216,6 @@ def randomstep(feiklab,i,j,n,m):
             return i,j
         
         
-
     #(1101)
     elif ((i % m != 0) and feiklab.get(i-1) == None
         and i - m >= 0 and feiklab.get(i-m) == None
@@ -186,7 +226,6 @@ def randomstep(feiklab,i,j,n,m):
             return i,j
             
         
-
     #(1110)
     elif (((i % m != 0) and feiklab.get(i-1) == None)
         and (i - m >= 0 and feiklab.get(i-m) == None)
@@ -292,15 +331,30 @@ def proverka_i_ogo(labirint,i,n,m,feiklab):#Для избежания лишни
     else:
         return i
         
-        
-
+def proverka_sosed(feiklab,i,n,m):
+    if (((i % m == 0) or feiklab.get(i-1) != None) and (i - m < 0 or feiklab.get(i-m) != None) and (i % m == m-1 or feiklab.get(i+1) != None) and ((i+m) > n*m -1 or feiklab.get(i+m) != None)):
+        i = -1
+        return i
+    else:
+        return i
+    
 def main():
     file = "Enter.txt"
+
     #receipt our params
     size_n = port(file)[0]
     size_m = port(file)[1]
+
+    labirint_main = dict()#создали хэш таблицу
+    labirint_main = {i: 11 for i in range(size_n*size_m)}#забили ее 11
+
+    labirint_ne_posetil = dict()
+    labirint_ne_posetil = {i: 1 for i in range(size_n*size_m)}
+
+    labirint_posetil = dict()#хэш-таблица для посещенных
+   
+    print(generate_lab_step_one(labirint_main,labirint_posetil,labirint_ne_posetil,size_n, size_m))
     
-    generate_lab_step_one(size_n, size_m)
 
   
 
