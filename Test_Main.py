@@ -9,6 +9,8 @@ from Main_algoritm import randomstep_for_last
 from Main_algoritm import randominfeik
 from Main_algoritm import brok_wall
 from Main_algoritm import proverka_i_ogo
+from Main_algoritm import outport
+import re
 
 
 def test1():
@@ -221,6 +223,21 @@ def test9():
     else:
         print("Test9 is correct")
 
+def test10():
+    hashtable = dict([(6,0),(7,0),(10,0),(102,0)])
+    outport("Exit.txt",hashtable)
+    p = open("Exit.txt",'r',encoding = 'utf-8')
+    strok = p.read()
+    hashtable = str(hashtable)
+    
+    if strok == hashtable:
+        print('great')
+    else:
+        print('bad')
+    
+    
+    
+
 
 
 def main():
@@ -235,7 +252,7 @@ def main():
     test7()
     test8()
     test9()
-    
+    test10()
 
 
 

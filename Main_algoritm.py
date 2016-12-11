@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import random
 import math
+import sys
 
 def port(self):#считывания из файла значения
     p = open(self,'r',encoding = 'utf-8')
@@ -13,9 +14,11 @@ def port(self):#считывания из файла значения
     p.close()
     return n,m
 
-#def outport(self):#запись в файл значения
+def outport(self,hashtable):#запись в файл значения
+    p = open(self,'w',encoding = 'utf-8')
+    p.write(str(hashtable))
+    p.close()
     
-
     
 def generate_lab_step_one(labirint_main,labirint_posetil,labirint_ne_posetil,size_n, size_m):#Шаг 1 , строим проход от 0 до н*м -1
     
@@ -450,7 +453,8 @@ def proverka_sosed(feiklab,i,n,m):
 
     
 def main():
-    file = "Enter.txt"
+    file = sys.argv[1]
+    file1 = sys.argv[2]
 
     #receipt our params
     (size_n, size_m) = port(file)
@@ -469,7 +473,8 @@ def main():
     
     labirint_main = step_3(labirint_main,labirint_posetil,labirint_ne_posetil,size_n,size_m)
 
-    print(labirint_main)
+
+    outport(file1,labirint_main)
     
 
   
