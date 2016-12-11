@@ -3,11 +3,10 @@
 from Main_algoritm import port
 
 def main():
-    s = port("Enter.txt")
-    
-    n = int(s[0])
-    m = int(s[1])
-    
+
+    (n,m) = port("Enter.txt")
+
+    print(n,m)
     Ntrue = 4
     Mtrue = 5
 

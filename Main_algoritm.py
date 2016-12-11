@@ -13,6 +13,9 @@ def port(self):#считывания из файла значения
     p.close()
     return n,m
 
+#def outport(self):#запись в файл значения
+    
+
     
 def generate_lab_step_one(labirint_main,labirint_posetil,labirint_ne_posetil,size_n, size_m):#Шаг 1 , строим проход от 0 до н*м -1
     
@@ -427,7 +430,7 @@ def if_I(i,size_n,size_m,j):#получение нового i-ого
         return i + size_m
                 
 
-def proverka_i_ogo(labirint,i,n,m,feiklab):#Для избежания лишних действий
+def proverka_i_ogo(labirint,i,n,m,feiklab):#Для избежания лишних действий, когда у нас значения какие либо 4 смежных квадрата 0
     if ((labirint[i] == 0) and (labirint.get(i-m-1) == None or labirint[i-m-1] == 0) and (labirint.get(i-m) == None or labirint[i-m] == 0) and (labirint.get(i-1) == None or labirint[i-1] == 0)
         or ((labirint[i] == 0) and (labirint.get(i-m) == None or labirint[i-m] == 0) and (labirint.get(i-m+1) == None or labirint[i-m+1] == 0) and (labirint.get(i+1) == None or labirint[i+1] == 0))
         or ((labirint[i] == 0) and (labirint.get(i-1) == None or labirint[i-1] == 0) and (labirint.get(i+m-1) == None or labirint[i+m-1] == 0) and (labirint.get(i+m) == None or labirint[i+m] == 0))
