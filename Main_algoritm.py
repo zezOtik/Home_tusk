@@ -11,8 +11,9 @@ def port(self):#считывания из файла значения
         strok.append(line)
     n = int(strok[0])
     m = int(strok[1])
+    vershiny = int(strok[2])
     p.close()
-    return n,m
+    return n,m,vershiny
 
 def outport(self,hashtable):#запись в файл значения
     p = open(self,'w',encoding = 'utf-8')
@@ -20,7 +21,7 @@ def outport(self,hashtable):#запись в файл значения
     p.close()
     
     
-def generate_lab_step_one(labirint_main,labirint_posetil,labirint_ne_posetil,size_n, size_m):#Шаг 1 , строим проход от 0 до н*м -1
+def generate_lab_step_one(labirint_main,labirint_posetil,labirint_ne_posetil,size_n,size_m):#Шаг 1 , строим проход от 0 до н*м -1
     
     labirint_ne_posetil.pop(0)#Отметили, что вершину 0 посетили
 
@@ -31,84 +32,263 @@ def generate_lab_step_one(labirint_main,labirint_posetil,labirint_ne_posetil,siz
     while(i != size_n * size_m - 1 ):#пока не равны значения работать
         #проверка на возможную ошибку 
         (i,j) = randomstep(labirint_posetil,i,size_n,size_m)#выбор случайного значения прохода
+        
         if j != 0:           
-            brok_wall(labirint_main, size_n, size_m, i, j)#сломали стенку
+            labirint_main = brok_wall(labirint_main, size_n, size_m, i, j)#сломали стенку
             labirint_posetil[i] = 1#Отметили вершину i-посещенной
             labirint_ne_posetil.pop(i)#Отметили вершину i-посещенной
-            i = proverka_i_ogo(labirint_main,i,size_n,size_m,labirint_posetil)#проверка на то, что мы сломали много стенок и получилось область где 4 смежных ячейки с значениями 0
         else:
-            i = proverka_i_ogo(labirint_main,i,size_n,size_m,labirint_posetil)
+            continue
 
     return labirint_main,labirint_posetil,labirint_ne_posetil
     
 
 
-def step_2(labirint_main,labirint_posetil,labirint_ne_posetil,size_n,size_m):#Шаг 2 от прошедших вершин идем(Здесь настраивается сложность)
-
-    if kolvo_elem(labirint_ne_posetil) != -1:
-        
-        random_kol = math.trunc(math.sqrt(kolvo_elem(labirint_posetil)))
-        
-        while(random_kol != 0):
-
+def step_2(labirint_main,labirint_posetil,labirint_ne_posetil,size_n,size_m,vershiny):#Шаг 2 от прошедших вершин идем(Здесь настраивается сложность)
+        while(vershiny != 0):
             i = randominfeik(labirint_posetil)
-            
-            i = proverka_sosed(labirint_posetil,i,size_n,size_m)
+            p = random.randint(1,math.ceil(math.pow(size_n*size_m,0.25)))
 
-            while(i != -1):
-                labirint_posetil[i] = 1
-                
+            while(p != 0):
                 (i,j) = randomstep(labirint_posetil,i,size_n,size_m)
-             
-
-                labirint_main = brok_wall(labirint_main, size_n, size_m, i, j)
-
-                if labirint_ne_posetil.get(i) == None:
-
+                
+                if (j == 0):
                     break
+                
                 else:
-                    labirint_ne_posetil.pop(i)
-                i = proverka_sosed(labirint_posetil,i,size_n,size_m)
-            random_kol -= 1
-        return labirint_main,labirint_posetil,labirint_ne_posetil
-    else:
+                    labirint_main = brok_wall(labirint_main,size_n,size_m,i,j)
+                    
+                    if labirint_ne_posetil.get(i) == None:
+                        break
+                    else:
+                        labirint_ne_posetil.pop(i)
+                        labirint_posetil[i] = 1
+                        
+                p -= 1
+            vershiny -= 1
+            
         return labirint_main,labirint_posetil,labirint_ne_posetil
 
 
 def step_3(labirint_main,labirint_posetil,labirint_ne_posetil,size_n,size_m):
-
-    while (kolvo_elem(labirint_ne_posetil) != -1):
-
+    
+    while (kolvo_elem(labirint_ne_posetil) != 0):
         i =  randominfeik(labirint_ne_posetil)
- 
-        labirint_ne_posetil.pop(i)
-        while(labirint_posetil.get(i) == None):
-            labirint_posetil[i] = 1
-            (i,j) = randomstep_for_last(i,size_n,size_m)
+        (i,j) = check_soseda(labirint_posetil,size_n,size_m,i)
+        
+        if i != -1 and j != 0:
             labirint_main = brok_wall(labirint_main,size_n,size_m,i,j)
-            
-            if labirint_ne_posetil.get(i) == None:
-                break
-            else:
-                labirint_ne_posetil.pop(i)            
+            labirint_ne_posetil = vypystit(i,j,labirint_ne_posetil,size_m,labirint_posetil)
+        else:
+            continue
+
     return labirint_main
       
 
 def kolvo_elem(hashtable):#получение количество значений в хэш-таблице
     kol_vo = len(list(hashtable.keys()))
-    if kol_vo == 0:
-        kol_vo = -1
-        return kol_vo
-    else:
-        return kol_vo
-    
+    return kol_vo
 
+def vypystit(i,j,labirint_ne_posetil,size_m,labirint_posetil):
+    if j == 1:
+        labirint_posetil[i+1] = 1
+        
+        if labirint_ne_posetil.get(i+1) == None:
+            return labirint_ne_posetil
+        
+        else:
+            labirint_ne_posetil.pop(i+1)
+            return labirint_ne_posetil
+        
+    elif j == 2:
+        labirint_posetil[i-size_m] = 1
+        
+        if labirint_ne_posetil.get(i-size_m) == None:
+            return labirint_ne_posetil
+        
+        else:
+            labirint_ne_posetil.pop(i-size_m)
+            return labirint_ne_posetil
+        
+    elif j == 3:
+        labirint_posetil[i-1] = 1
+        
+        if labirint_ne_posetil.get(i-1) == None:
+            return labirint_ne_posetil
+        
+        else:
+            labirint_ne_posetil.pop(i-1)
+            return labirint_ne_posetil
+        
+    else:
+        labirint_posetil[i+size_m] = 1
+        
+        if labirint_ne_posetil.get(i+size_m) == None:
+            return labirint_ne_posetil
+        
+        else:
+            labirint_ne_posetil.pop(i+size_m)
+            return labirint_ne_posetil
+    
 
 def randominfeik(hashtable):#Вывод рандомной уже посещенной клетки
     p = random.randint(0,kolvo_elem(hashtable)-1)
     i = list(hashtable.keys())[p]
     return i
 
+def check_soseda(hashtable,size_n,size_m,i):
+    
+    #проверил(0,1,1,1)
+    if (i % size_m != 0 and hashtable.get(i-1) != None and
+        (i - size_m < 0 or hashtable.get(i-size_m) == None) and
+        (i % size_m == size_m-1 or hashtable.get(i+1) == None) and
+        (i+size_m > size_n*size_m -1 or hashtable.get(i+size_m) == None)):
+                j = 1
+                i = if_I(i,size_n,size_m,j)
+                return i,j
+        
+    #wp(0,0,0,1)
+    elif (i % size_m != 0 and hashtable.get(i-1) != None and
+          i - size_m >= 0 and hashtable.get(i-size_m) != None and
+          i % size_m != size_m-1 and hashtable.get(i+1) != None and
+          (i+size_m > size_n*size_m -1 or hashtable.get(i+size_m) == None)):
+            j = random.randint(1,3)
+            i = if_I(i,size_n,size_m,j)
+            return i,j
+        
+    #wp(0,1,0,1)   
+    elif (i % size_m != 0 and hashtable.get(i-1) != None and
+          (i - size_m < 0 or hashtable.get(i-size_m) == None) and
+          i % size_m != size_m-1 and hashtable.get(i+1) != None and
+          (i+size_m > size_n*size_m -1 or hashtable.get(i+size_m) == None)):
+            j = random.choice([1,3])
+            i = if_I(i,size_n,size_m,j)
+            return i,j
+
+    #(0,0,1,0)
+    elif (i % size_m != 0 and hashtable.get(i-1) != None and
+          i - size_m >= 0 and hashtable.get(i-size_m) != None and
+          (i % size_m == size_m-1 or hashtable.get(i+1) == None) and
+          i+size_m <= size_n*size_m -1 and hashtable.get(i+size_m) != None):
+            j = random.choice([1,2,4])
+            i = if_I(i,size_n,size_m,j)
+            return i,j
+        
+    #(0,1,0,0)
+    elif (i % size_m != 0 and hashtable.get(i-1) != None and
+          (i - size_m < 0 or hashtable.get(i-size_m) == None) and
+          i % size_m != size_m-1 and hashtable.get(i+1) != None and
+          i+size_m <= size_n*size_m -1 and hashtable.get(i+size_m) != None):
+            j = random.choice([1,3,4])
+            i = if_I(i,size_n,size_m,j)
+            return i,j
+        
+    #(0,1,1,0)
+    elif ((i % size_m != 0) and hashtable.get(i-1) != None and
+          (i - size_m < 0 or hashtable.get(i-size_m) == None) and
+          (i % size_m == size_m-1 or hashtable.get(i+1) == None) and
+          (i+size_m <= size_n*size_m - 1) and hashtable.get(i+size_m) != None):
+            j = random.choice([1,4])
+            i = if_I(i,size_n,size_m,j)
+            return i,j
+        
+    #(0,0,1,1)
+    elif (i % size_m != 0 and hashtable.get(i-1) != None and
+          i - size_m >= 0 and hashtable.get(i-size_m) != None and
+          (i % size_m == size_m-1 or hashtable.get(i+1) == None) and
+          (i+size_m > size_n*size_m -1 or hashtable.get(i+size_m) == None)):
+            j = random.randint(1,2)
+            i = if_I(i,size_n,size_m,j)
+            return i,j
+        
+    #(0,0,0,0)
+    elif (i % size_m != 0 and hashtable.get(i-1) != None and
+          i - size_m >= 0 and hashtable.get(i-size_m) != None and
+          i % size_m != size_m-1 and hashtable.get(i+1) != None and
+          i+size_m <= size_n*size_m -1 and hashtable.get(i+size_m) != None):
+            j = random.randint(1,4)
+            i = if_I(i,size_n,size_m,j)
+            return i,j
+
+    #(1000)
+    elif ((i % size_m == 0 or hashtable.get(i-1) == None) and
+          i - size_m >= 0 and hashtable.get(i-size_m) != None and
+          i % size_m != size_m-1 and hashtable.get(i+1) != None and
+          i+size_m <= size_n*size_m -1 and hashtable.get(i+size_m) != None):
+            j = random.randint(2,4)
+            i = if_I(i,size_n,size_m,j)
+            return i,j
+            
+        
+    #1001
+    elif ((i % size_m == 0 or hashtable.get(i-1) == None) and
+          i - size_m >= 0 and hashtable.get(i-size_m) != None and
+          i % size_m != size_m-1 and hashtable.get(i+1) != None and
+          (i+size_m > size_n*size_m -1 or hashtable.get(i+size_m) == None)):
+            j = random.randint(2,3)
+            i = if_I(i,size_n,size_m,j)
+            return i,j
+        
+        
+    #(1010)
+    elif ((i % size_m == 0 or hashtable.get(i-1) == None) and
+          (i - size_m >= 0 and hashtable.get(i-size_m) != None) and
+          (i % size_m == size_m-1 or hashtable.get(i+1) == None) and
+          i+size_m <= size_n*size_m -1 and hashtable.get(i+size_m) != None):
+            j = random.choice([2,4])
+            i = if_I(i,size_n,size_m,j)
+            return i,j
+
+
+    #(1011)
+    elif ((i % size_m == 0 or hashtable.get(i-1) == None) and
+          i - size_m >= 0 and hashtable.get(i-size_m) != None and (
+              i % size_m == size_m-1 or hashtable.get(i+1) == None) and
+          (i+size_m > size_n*size_m -1 or hashtable.get(i+size_m) == None)):
+            j = 2
+            i = if_I(i,size_n,size_m,j)
+            return i,j
+        
+
+    #(1100)
+    elif ((i % size_m == 0 or hashtable.get(i-1) == None) and
+          (i - size_m < 0 or hashtable.get(i-size_m) == None) and
+          i % size_m != size_m-1 and hashtable.get(i+1) != None and
+          i+size_m <= size_n*size_m -1 and hashtable.get(i+size_m) != None):
+            j = random.randint(3,4)
+            i = if_I(i,size_n,size_m,j)
+            return i,j
+        
+        
+    #(1101)
+    elif ((i % size_m == 0 or hashtable.get(i-1) == None) and
+          (i - size_m < 0 or hashtable.get(i-size_m) == None) and
+          i % size_m != size_m-1 and hashtable.get(i+1) != None and
+          (i+size_m > size_n*size_m -1 or hashtable.get(i+size_m) == None)):
+            j = 3
+            i = if_I(i,size_n,size_m,j)
+            return i,j
+            
+        
+    #(1110)
+    elif ((i % size_m == 0 or hashtable.get(i-1) == None) and
+          (i - size_m < 0 or hashtable.get(i-size_m) == None) and
+          (i % size_m == size_m-1 or hashtable.get(i+1) == None) and
+          i+size_m <= size_n*size_m -1 and hashtable.get(i+size_m) != None):
+            j = 4
+            i = if_I(i,size_n,size_m,j)
+            return i,j
+             
+    #(1111)
+    elif ((i % size_m == 0 or hashtable.get(i-1) == None) and
+          (i - size_m < 0 or hashtable.get(i-size_m) == None) and
+          (i % size_m == size_m-1 or hashtable.get(i+1) == None) and
+          (i+size_m > size_n*size_m -1 or hashtable.get(i+size_m) == None)):
+            j = 0
+            i = -1
+            return i,j
+    
+    
 
 def randomstep(hashtable,i,size_n,size_m):#По входящим данным выбирает куда следует стрелка пробивания стенок.
     
@@ -252,103 +432,6 @@ def randomstep(hashtable,i,size_n,size_m):#По входящим данным в
             j = random.randint(1,3)
             i = if_I(i,size_n,size_m,j)
             return i,j
-    
-def randomstep_for_last(i,size_n,size_m):#По входящим данным выбирает куда следует стрелка пробивания стенок, для шага 3
-    
-    #проверил(0,1,1,1)
-    if (i % size_m == 0) and (i - size_m >= 0) and (i % size_m != size_m-1) and (i+size_m <= size_n*size_m -1):
-            j = random.randint(2,4)
-            i = if_I(i,size_n,size_m,j)
-            return i,j
-        
-    #wp(0,0,0,1)
-    elif (i % size_m == 0) and (i - size_m < 0) and (i % size_m == size_m-1) and (i+size_m <= size_n*size_m -1):
-            j = 4
-            i = if_I(i,size_n,size_m,j)
-            return i,j
-        
-    #wp(0,1,0,1)   
-    elif (i % size_m == 0) and (i - size_m >= 0) and (i % size_m == size_m-1) and (i + size_m <= size_n*size_m -1):
-            j = random.choice([2,4])
-            i = if_I(i,size_n,size_m,j)
-            return i,j
-
-    #(0,0,1,0)
-    elif (i % size_m == 0) and (i - size_m < 0) and (i % size_m != size_m-1) and (i + size_m > size_n*size_m -1):
-            j = 3
-            i = if_I(i,size_n,size_m,j)
-            return i,j
-        
-    #(0,1,0,0)
-    elif (i % size_m == 0) and (i - size_m >= 0) and (i % size_m == size_m-1) and (i+size_m > size_n*size_m -1):
-            j = 2
-            i = if_I(i,size_n,size_m,j)
-            return i,j
-        
-    #(0,1,1,0)
-    elif (i % size_m == 0) and (i - size_m >= 0) and (i % size_m != size_m-1) and (i + size_m > size_n*size_m -1):
-            j = random.randint(2,3)
-            i = if_I(i,size_n,size_m,j)
-            return i,j
-        
-    #(0,0,1,1)
-    elif (i % size_m == 0) and (i - size_m < 0) and (i % size_m != size_m-1) and (i + size_m <= size_n*size_m -1):
-            j = random.randint(3,4)
-            i = if_I(i,size_n,size_m,j)
-            return i,j
-
-    #(1000)
-    elif (i % size_m != 0) and (i - size_m < 0) and (i % size_m == size_m-1) and (i + size_m > size_n*size_m -1):
-            j = 1
-            i = if_I(i,size_n,size_m,j)
-            return i,j
-            
-        
-    #1001
-    elif (i % size_m != 0) and (i - size_m < 0) and (i % size_m == size_m-1) and (i+size_m <= size_n*size_m -1):
-            j = random.choice([1,4])
-            i = if_I(i,size_n,size_m,j)
-            return i,j
-        
-        
-    #(1010)
-    elif (i % size_m != 0) and (i - size_m < 0) and (i % size_m != size_m-1) and (i+size_m > size_n*size_m -1):
-            j = random.choice([1,3])
-            i = if_I(i,size_n,size_m,j)
-            return i,j
-
-
-    #(1011)
-    elif (i % size_m != 0) and (i - size_m < 0) and (i % size_m != size_m-1) and (i + size_m <= size_n*size_m -1):
-            j = random.choice([1,3,4])
-            i = if_I(i,size_n,size_m,j)
-            return i,j
-        
-
-    #(1100)
-    elif (i % size_m != 0) and (i - size_m >= 0) and (i % size_m == size_m-1) and (i+size_m > size_n*size_m -1):
-            j = random.randint(1,2)
-            i = if_I(i,size_n,size_m,j)
-            return i,j
-        
-        
-    #(1101)
-    elif (i % size_m != 0) and (i - size_m >= 0) and (i % size_m == size_m-1) and (i+size_m <= size_n*size_m -1):
-            j = random.choice([1,2,4])
-            i = if_I(i,size_n,size_m,j)
-            return i,j
-            
-        
-    #(1110)
-    elif (i % size_m != 0) and (i - size_m >= 0) and (i % size_m != size_m-1) and (i+size_m > size_n*size_m -1):
-            j = random.randint(1,3)
-            i = if_I(i,size_n,size_m,j)
-            return i,j
-    #(1111)
-    elif (i % size_m != 0) and (i - size_m >= 0) and (i % size_m != size_m-1) and (i+size_m <= size_n*size_m -1):
-            j = random.randint(1,3)
-            i = if_I(i,size_n,size_m,j)
-            return i,j
 
 
 def brok_wall(hashtable,size_n,size_m,i,j):#Пробивание лабиринта
@@ -431,25 +514,6 @@ def if_I(i,size_n,size_m,j):#получение нового i-ого
 
     elif j == 4:
         return i + size_m
-                
-
-def proverka_i_ogo(labirint,i,n,m,feiklab):#Для избежания лишних действий, когда у нас значения какие либо 4 смежных квадрата 0
-    if ((labirint[i] == 0) and (labirint.get(i-m-1) == None or labirint[i-m-1] == 0) and (labirint.get(i-m) == None or labirint[i-m] == 0) and (labirint.get(i-1) == None or labirint[i-1] == 0)
-        or ((labirint[i] == 0) and (labirint.get(i-m) == None or labirint[i-m] == 0) and (labirint.get(i-m+1) == None or labirint[i-m+1] == 0) and (labirint.get(i+1) == None or labirint[i+1] == 0))
-        or ((labirint[i] == 0) and (labirint.get(i-1) == None or labirint[i-1] == 0) and (labirint.get(i+m-1) == None or labirint[i+m-1] == 0) and (labirint.get(i+m) == None or labirint[i+m] == 0))
-        or ((labirint[i] == 0) and (labirint.get(i+1) == None or labirint[i+1] == 0) and (labirint.get(i+m) == None or labirint[i+m] == 0) and (labirint.get(i+m+1) == None or labirint[i+m+1] == 0))):
-            p = random.randint(0,len(list(feiklab.keys()))-1)
-            i = list(feiklab.keys())[p]
-            return i
-    else:
-        return i
-        
-def proverka_sosed(feiklab,i,n,m):
-    if (((i % m == 0) or feiklab.get(i-1) != None) and (i - m < 0 or feiklab.get(i-m) != None) and (i % m == m-1 or feiklab.get(i+1) != None) and ((i+m) > n*m -1 or feiklab.get(i+m) != None)):
-        i = -1
-        return i
-    else:
-        return i
 
     
 def main():
@@ -457,7 +521,7 @@ def main():
     file1 = sys.argv[2]
 
     #receipt our params
-    (size_n, size_m) = port(file)
+    (size_n, size_m,vershiny) = port(file)
 
     labirint_main = dict()#создали хэш таблицу основная
     labirint_main = {i: 11 for i in range(size_n*size_m)}#забили ее 11
@@ -469,7 +533,7 @@ def main():
    
     (labirint_main,labirint_posetil,labirint_ne_posetil) = (generate_lab_step_one(labirint_main,labirint_posetil,labirint_ne_posetil,size_n, size_m))
 
-    (labirint_main,labirint_posetil,labirint_ne_posetil) = (step_2(labirint_main,labirint_posetil,labirint_ne_posetil,size_n,size_m))
+    (labirint_main,labirint_posetil,labirint_ne_posetil) = (step_2(labirint_main,labirint_posetil,labirint_ne_posetil,size_n,size_m,vershiny))
     
     labirint_main = step_3(labirint_main,labirint_posetil,labirint_ne_posetil,size_n,size_m)
 
