@@ -46,7 +46,7 @@ def generate_lab_step_one(labirint_main,labirint_posetil,labirint_ne_posetil,siz
 
 def step_2(labirint_main,labirint_posetil,labirint_ne_posetil,size_n,size_m,vershiny):#Шаг 2 от прошедших вершин идем(Здесь настраивается сложность)
         while(vershiny != 0):
-            i = randominfeik(labirint_posetil)
+            i = randominfeik(labirint_posetil,size_n,size_m)
             p = random.randint(1,math.ceil(math.pow(size_n*size_m,0.25)))
 
             while(p != 0):
@@ -58,7 +58,7 @@ def step_2(labirint_main,labirint_posetil,labirint_ne_posetil,size_n,size_m,vers
                 else:
                     labirint_main = brok_wall(labirint_main,size_n,size_m,i,j)
                     
-                    if labirint_ne_posetil.get(i) == None:
+                    if labirint_ne_posetil[i] == None:
                         break
                     else:
                         labirint_ne_posetil.pop(i)
@@ -71,18 +71,15 @@ def step_2(labirint_main,labirint_posetil,labirint_ne_posetil,size_n,size_m,vers
 
 
 def step_3(labirint_main,labirint_posetil,labirint_ne_posetil,size_n,size_m):
-    
-    while (kolvo_elem(labirint_ne_posetil) != 0):
-        i =  randominfeik(labirint_ne_posetil)
-        (i,j) = check_soseda(labirint_posetil,size_n,size_m,i)
+    if(kolvo_elem(labirint_ne_posetil) != 0):
+        i = randominfeik(labirint_ne_posetil,size_n,size_m)
+        (i,j) = check_soseda(labirint_posetil,size_n,size_m,i,labirint_ne_posetil)
         
-        if i != -1 and j != 0:
-            labirint_main = brok_wall(labirint_main,size_n,size_m,i,j)
-            labirint_ne_posetil = vypystit(i,j,labirint_ne_posetil,size_m,labirint_posetil)
-        else:
-            continue
-
-    return labirint_main
+        labirint_main = brok_wall(labirint_main,size_n,size_m,i,j)
+        labirint_ne_posetil = vypystit(i,j,labirint_ne_posetil,size_m,labirint_posetil)
+        return (step_3(labirint_main,labirint_posetil,labirint_ne_posetil,size_n,size_m))
+    else:
+        return labirint_main
       
 
 def kolvo_elem(hashtable):#получение количество значений в хэш-таблице
@@ -91,58 +88,59 @@ def kolvo_elem(hashtable):#получение количество значен�
 
 def vypystit(i,j,labirint_ne_posetil,size_m,labirint_posetil):
     if j == 1:
-        labirint_posetil[i+1] = 1
-        
         if labirint_ne_posetil.get(i+1) == None:
             return labirint_ne_posetil
         
         else:
             labirint_ne_posetil.pop(i+1)
+            labirint_posetil[i+1] = 1
             return labirint_ne_posetil
         
     elif j == 2:
-        labirint_posetil[i-size_m] = 1
-        
-        if labirint_ne_posetil.get(i-size_m) == None:
+        if labirint_ne_posetil.get(i - size_m) == None:
             return labirint_ne_posetil
         
         else:
             labirint_ne_posetil.pop(i-size_m)
+            labirint_posetil[i-size_m] = 1
             return labirint_ne_posetil
         
     elif j == 3:
-        labirint_posetil[i-1] = 1
-        
         if labirint_ne_posetil.get(i-1) == None:
             return labirint_ne_posetil
         
         else:
             labirint_ne_posetil.pop(i-1)
+            labirint_posetil[i-1] = 1
             return labirint_ne_posetil
         
-    else:
-        labirint_posetil[i+size_m] = 1
-        
+    elif j == 4:
         if labirint_ne_posetil.get(i+size_m) == None:
             return labirint_ne_posetil
         
         else:
             labirint_ne_posetil.pop(i+size_m)
+            labirint_posetil[i+size_m] = 1
             return labirint_ne_posetil
     
 
-def randominfeik(hashtable):#Вывод рандомной уже посещенной клетки
+def randominfeik(hashtable,size_n,size_m):#Вывод рандомной уже посещенной клетки
     p = random.randint(0,kolvo_elem(hashtable)-1)
     i = list(hashtable.keys())[p]
-    return i
+    if i == size_n * size_m - 1:
+        return randominfeik(hashtable,size_n,size_m)
+    else:
+        return i
 
-def check_soseda(hashtable,size_n,size_m,i):
+def check_soseda(hashtable,size_n,size_m,i,labirint_ne_posetil):
     
     #проверил(0,1,1,1)
     if (i % size_m != 0 and hashtable.get(i-1) != None and
         (i - size_m < 0 or hashtable.get(i-size_m) == None) and
         (i % size_m == size_m-1 or hashtable.get(i+1) == None) and
         (i+size_m > size_n*size_m -1 or hashtable.get(i+size_m) == None)):
+                print('1s')
+                print(i)
                 j = 1
                 i = if_I(i,size_n,size_m,j)
                 return i,j
@@ -152,6 +150,8 @@ def check_soseda(hashtable,size_n,size_m,i):
           i - size_m >= 0 and hashtable.get(i-size_m) != None and
           i % size_m != size_m-1 and hashtable.get(i+1) != None and
           (i+size_m > size_n*size_m -1 or hashtable.get(i+size_m) == None)):
+            print('2s')
+            print(i)
             j = random.randint(1,3)
             i = if_I(i,size_n,size_m,j)
             return i,j
@@ -161,6 +161,8 @@ def check_soseda(hashtable,size_n,size_m,i):
           (i - size_m < 0 or hashtable.get(i-size_m) == None) and
           i % size_m != size_m-1 and hashtable.get(i+1) != None and
           (i+size_m > size_n*size_m -1 or hashtable.get(i+size_m) == None)):
+            print('3s')
+            print(i)
             j = random.choice([1,3])
             i = if_I(i,size_n,size_m,j)
             return i,j
@@ -170,6 +172,8 @@ def check_soseda(hashtable,size_n,size_m,i):
           i - size_m >= 0 and hashtable.get(i-size_m) != None and
           (i % size_m == size_m-1 or hashtable.get(i+1) == None) and
           i+size_m <= size_n*size_m -1 and hashtable.get(i+size_m) != None):
+            print('4s')
+            print(i)
             j = random.choice([1,2,4])
             i = if_I(i,size_n,size_m,j)
             return i,j
@@ -179,6 +183,8 @@ def check_soseda(hashtable,size_n,size_m,i):
           (i - size_m < 0 or hashtable.get(i-size_m) == None) and
           i % size_m != size_m-1 and hashtable.get(i+1) != None and
           i+size_m <= size_n*size_m -1 and hashtable.get(i+size_m) != None):
+            print('5s')
+            print(i)
             j = random.choice([1,3,4])
             i = if_I(i,size_n,size_m,j)
             return i,j
@@ -188,6 +194,8 @@ def check_soseda(hashtable,size_n,size_m,i):
           (i - size_m < 0 or hashtable.get(i-size_m) == None) and
           (i % size_m == size_m-1 or hashtable.get(i+1) == None) and
           (i+size_m <= size_n*size_m - 1) and hashtable.get(i+size_m) != None):
+            print('6s')
+            print(i)
             j = random.choice([1,4])
             i = if_I(i,size_n,size_m,j)
             return i,j
@@ -197,6 +205,8 @@ def check_soseda(hashtable,size_n,size_m,i):
           i - size_m >= 0 and hashtable.get(i-size_m) != None and
           (i % size_m == size_m-1 or hashtable.get(i+1) == None) and
           (i+size_m > size_n*size_m -1 or hashtable.get(i+size_m) == None)):
+            print('7s')
+            print(i)
             j = random.randint(1,2)
             i = if_I(i,size_n,size_m,j)
             return i,j
@@ -206,6 +216,8 @@ def check_soseda(hashtable,size_n,size_m,i):
           i - size_m >= 0 and hashtable.get(i-size_m) != None and
           i % size_m != size_m-1 and hashtable.get(i+1) != None and
           i+size_m <= size_n*size_m -1 and hashtable.get(i+size_m) != None):
+            print('8s')
+            print(i)
             j = random.randint(1,4)
             i = if_I(i,size_n,size_m,j)
             return i,j
@@ -215,6 +227,8 @@ def check_soseda(hashtable,size_n,size_m,i):
           i - size_m >= 0 and hashtable.get(i-size_m) != None and
           i % size_m != size_m-1 and hashtable.get(i+1) != None and
           i+size_m <= size_n*size_m -1 and hashtable.get(i+size_m) != None):
+            print('9s')
+            print(i)
             j = random.randint(2,4)
             i = if_I(i,size_n,size_m,j)
             return i,j
@@ -225,6 +239,8 @@ def check_soseda(hashtable,size_n,size_m,i):
           i - size_m >= 0 and hashtable.get(i-size_m) != None and
           i % size_m != size_m-1 and hashtable.get(i+1) != None and
           (i+size_m > size_n*size_m -1 or hashtable.get(i+size_m) == None)):
+            print('10s')
+            print(i)
             j = random.randint(2,3)
             i = if_I(i,size_n,size_m,j)
             return i,j
@@ -235,6 +251,8 @@ def check_soseda(hashtable,size_n,size_m,i):
           (i - size_m >= 0 and hashtable.get(i-size_m) != None) and
           (i % size_m == size_m-1 or hashtable.get(i+1) == None) and
           i+size_m <= size_n*size_m -1 and hashtable.get(i+size_m) != None):
+            print('11s')
+            print(i)
             j = random.choice([2,4])
             i = if_I(i,size_n,size_m,j)
             return i,j
@@ -242,9 +260,11 @@ def check_soseda(hashtable,size_n,size_m,i):
 
     #(1011)
     elif ((i % size_m == 0 or hashtable.get(i-1) == None) and
-          i - size_m >= 0 and hashtable.get(i-size_m) != None and (
-              i % size_m == size_m-1 or hashtable.get(i+1) == None) and
+          i - size_m >= 0 and hashtable.get(i-size_m) != None and
+          (i % size_m == size_m-1 or hashtable.get(i+1) == None) and
           (i+size_m > size_n*size_m -1 or hashtable.get(i+size_m) == None)):
+            print('12s')
+            print(i)
             j = 2
             i = if_I(i,size_n,size_m,j)
             return i,j
@@ -255,6 +275,8 @@ def check_soseda(hashtable,size_n,size_m,i):
           (i - size_m < 0 or hashtable.get(i-size_m) == None) and
           i % size_m != size_m-1 and hashtable.get(i+1) != None and
           i+size_m <= size_n*size_m -1 and hashtable.get(i+size_m) != None):
+            print('13s')
+            print(i)
             j = random.randint(3,4)
             i = if_I(i,size_n,size_m,j)
             return i,j
@@ -265,6 +287,8 @@ def check_soseda(hashtable,size_n,size_m,i):
           (i - size_m < 0 or hashtable.get(i-size_m) == None) and
           i % size_m != size_m-1 and hashtable.get(i+1) != None and
           (i+size_m > size_n*size_m -1 or hashtable.get(i+size_m) == None)):
+            print('14s')
+            print(i)
             j = 3
             i = if_I(i,size_n,size_m,j)
             return i,j
@@ -275,6 +299,8 @@ def check_soseda(hashtable,size_n,size_m,i):
           (i - size_m < 0 or hashtable.get(i-size_m) == None) and
           (i % size_m == size_m-1 or hashtable.get(i+1) == None) and
           i+size_m <= size_n*size_m -1 and hashtable.get(i+size_m) != None):
+            print('15s')
+            print(i)
             j = 4
             i = if_I(i,size_n,size_m,j)
             return i,j
@@ -283,10 +309,11 @@ def check_soseda(hashtable,size_n,size_m,i):
     elif ((i % size_m == 0 or hashtable.get(i-1) == None) and
           (i - size_m < 0 or hashtable.get(i-size_m) == None) and
           (i % size_m == size_m-1 or hashtable.get(i+1) == None) and
-          (i+size_m > size_n*size_m -1 or hashtable.get(i+size_m) == None)):
-            j = 0
-            i = -1
-            return i,j
+          (i+size_m > size_n*size_m - 1 or hashtable.get(i+size_m) == None)):
+            print('16s')
+            print(i)
+            i =  randominfeik(labirint_ne_posetil,size_n,size_m)
+            return check_soseda(hashtable,size_n,size_m,i,labirint_ne_posetil)
     
     
 
@@ -361,7 +388,7 @@ def randomstep(hashtable,i,size_n,size_m):#По входящим данным в
           and (i % size_m == size_m-1 or hashtable.get(i+1) != None)
           and ((i+size_m) > size_n*size_m -1 or hashtable.get(i+size_m) != None)):
             j = 0
-            i = int(randominfeik(hashtable))
+            i = int(randominfeik(hashtable,size_n,size_m))
             return i,j
 
     #(1000)
@@ -515,10 +542,48 @@ def if_I(i,size_n,size_m,j):#получение нового i-ого
     elif j == 4:
         return i + size_m
 
+def proverka_i_ogo(labirint,i,m):#Для избежания лишних действий, когда у нас значения какие либо 4 смежных квадрата 0
+    if (labirint.get(i) == 0 and (labirint.get(i+1) == 0 or labirint.get(i+1) == 10) and (labirint.get(i+m) == 0 or labirint.get(i+m) == 1)):
+        j = random.randint(1,4)
+        if j == 1:
+            labirint[i] = 1
+            return labirint
+        elif j == 2:
+            labirint[i] = 10
+            return labirint
+        elif j == 3:
+            if labirint.get(i+1) == 0:
+               labirint[i+1] = 1
+               return labirint
+            else:
+                labirint[i+1] = 11
+                return labirint
+        else:
+            if labirint.get(i+m) == 0:
+                labirint[i+m] = 10
+                return labirint
+            else:
+                labirint[i+m] = 11
+                return labirint
+    else:
+        return labirint
+                    
+                
+def check_na_last(labirint,size_n,size_m):
+    i = 0
+    while(i <= size_n * size_m - 1):
+        if ((i % size_m == size_m - 1) or (i + size_m > size_n * size_m - 1)):
+            i += 1
+            continue
+        else:
+            labirint = proverka_i_ogo(labirint,i,size_m)
+            i += 1
+    return labirint
+    
     
 def main():
     file = sys.argv[1]
-    file1 = sys.argv[2]
+    file1 = sys.argv[2] 
 
     #receipt our params
     (size_n, size_m,vershiny) = port(file)
@@ -534,8 +599,12 @@ def main():
     (labirint_main,labirint_posetil,labirint_ne_posetil) = (generate_lab_step_one(labirint_main,labirint_posetil,labirint_ne_posetil,size_n, size_m))
 
     (labirint_main,labirint_posetil,labirint_ne_posetil) = (step_2(labirint_main,labirint_posetil,labirint_ne_posetil,size_n,size_m,vershiny))
+    print(labirint_ne_posetil)
+    print(labirint_posetil)
     
     labirint_main = step_3(labirint_main,labirint_posetil,labirint_ne_posetil,size_n,size_m)
+
+    #labirint_main = check_na_last(labirint_main,size_n,size_m)
 
 
     outport(file1,labirint_main)

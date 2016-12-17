@@ -116,11 +116,12 @@ def test4():
         
 def test5():
 
-    hashtable = dict([(1,1),(6,3),(4,4),(9,7)])
+    hashtable = dict([(0,1),(2,3),(3,4),(1,7)])
+    size_n = 2
+    size_m = 2
+    i = randominfeik(hashtable,size_n,size_m)
 
-    i = randominfeik(hashtable)
-
-    if (i == 1) or (i == 6) or (i == 4) or (i == 9):
+    if (i == 1) or (i == 0) or (i == 2) or (i == 3):
         print("Test5 is correct")
     else:
         print("Test5 is not correct")
@@ -164,12 +165,11 @@ def test7():
 
 
 def test8():
-
-def test9():
-    
-    
-    
-
+    hashtable = dict([(0,0),(1,0),(2,10),(3,0),(4,0),(5,10)])
+    size_n = 2
+    size_m = 3
+    hashtable = check_na_last(hashtable,size_n,size_m)
+    print(hashtable)
 
 
 def main():
@@ -182,6 +182,7 @@ def main():
     test5()
     test6()
     test7()
+    test8()
 
 
 
