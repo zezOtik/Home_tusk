@@ -97,12 +97,12 @@ def vypystit(i,j,labirint_ne_posetil,size_m,labirint_posetil):
             return labirint_ne_posetil
         
     elif j == 2:
-        if labirint_ne_posetil.get(i - size_m) == None:
+        if labirint_ne_posetil.get(i + size_m) == None:
             return labirint_ne_posetil
         
         else:
-            labirint_ne_posetil.pop(i-size_m)
-            labirint_posetil[i-size_m] = 1
+            labirint_ne_posetil.pop(i + size_m)
+            labirint_posetil[i + size_m] = 1
             return labirint_ne_posetil
         
     elif j == 3:
@@ -115,12 +115,12 @@ def vypystit(i,j,labirint_ne_posetil,size_m,labirint_posetil):
             return labirint_ne_posetil
         
     elif j == 4:
-        if labirint_ne_posetil.get(i+size_m) == None:
+        if labirint_ne_posetil.get(i - size_m) == None:
             return labirint_ne_posetil
         
         else:
-            labirint_ne_posetil.pop(i+size_m)
-            labirint_posetil[i+size_m] = 1
+            labirint_ne_posetil.pop(i - size_m)
+            labirint_posetil[i - size_m] = 1
             return labirint_ne_posetil
     
 
