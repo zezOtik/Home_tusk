@@ -2,6 +2,7 @@
 import random
 import math
 import sys
+import time
 
 def port(self):#считывания из файла значения
     p = open(self,'r',encoding = 'utf-8')
@@ -512,6 +513,7 @@ def if_I(i,size_n,size_m,j):#получение нового i-ого
         return i + size_m   
     
 def main():
+    time.clock()
     file = sys.argv[1]
     file1 = sys.argv[2] 
 
@@ -534,6 +536,7 @@ def main():
 
 
     outport(file1,labirint_main)
+    print(time.clock())
     
 
   

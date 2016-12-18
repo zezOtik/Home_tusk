@@ -11,7 +11,7 @@ def test_port():
     Vtrue = 5
 
     if n != Ntrue or m != Mtrue or vershiny != Vtrue:
-        print("Your values is incorrect")
+        print("Your values is not correct")
     else:
         print("test_port great")
 
