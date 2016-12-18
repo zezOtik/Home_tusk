@@ -2,7 +2,7 @@
 
 from Main_algoritm import *
 
-def test1():
+def test_port():
 
     (n,m,vershiny) = port("Enter.txt")
 
@@ -12,13 +12,10 @@ def test1():
 
     if n != Ntrue or m != Mtrue or vershiny != Vtrue:
         print("Your values is incorrect")
-
-    
     else:
-        print("test1 great")
+        print("test_port great")
 
-
-def test2():
+def test_kolvo():
     hashtable1 = {i: 11 for i in range(4*5)}
 
     hashtable2 = {}
@@ -28,18 +25,16 @@ def test2():
     kol_vo2 = kolvo_elem(hashtable2)
 
     if(kol_vo1 != 20):
-        print("test2 is not correct for values 4 & 5")
+        print("test_kolvo is not correct for values 4 & 5")
     else:
-        print("test2 is correct for values 4 & 5")
+        print("test_kolve is correct for values 4 & 5")
 
     if(kol_vo2 != 0):
-        print("test2 is not correct for hash-table is empty")
+        print("test_kolve is not correct for hash-table is empty")
     else:
-        print("test2 is correct for for hash-table is empty")
+        print("test_kolvo is correct for for hash-table is empty")
 
-
-
-def test3():
+def test_if_I():
 
     size_n = 4
     size_m = 5
@@ -65,30 +60,29 @@ def test3():
     i3 = if_I(i3,size_n,size_m,j3)
     
     if i != 8:
-        print("Test3 is not correct for values are i = 7 and j = 3 and n = 4 and m = 5, need 8 for true")
+        print("Test_if_I is not correct for values are i = 7 and j = 3 and n = 4 and m = 5, need 8 for true")
     else:
-        print("Test3 is correct for values are i = 7 and j = 3 and n = 4 and m = 5")
+        print("Test_if_I is correct for values are i = 7 and j = 3 and n = 4 and m = 5")
 
 
     if i1 != 3:
-        print("Test3 is not correct for values are i = 8 and j = 2 and n = 4 and m = 5, need 3 for true")
+        print("Test_if_I is not correct for values are i = 8 and j = 2 and n = 4 and m = 5, need 3 for true")
     else:
-        print("Test3 is correct for values are i = 8 and j = 2 and n = 4 and m = 5")
+        print("Test_if_I is correct for values are i = 8 and j = 2 and n = 4 and m = 5")
 
 
     if i2 != 8:
-        print("Test3 is not correct for values are i = 9 and j = 1 and n = 4 and m = 5, need 8 for true")
+        print("Test_if_I is not correct for values are i = 9 and j = 1 and n = 4 and m = 5, need 8 for true")
     else:
         print("Test3 is correct for values are i = 9 and j = 1 and n = 4 and m = 5")
 
 
     if i3 != 19:
-        print("Test3 is not correct for values are i = 14 and j = 4 and n = 4 and m = 5, need 19 for true")
+        print("Test_if_I is not correct for values are i = 14 and j = 4 and n = 4 and m = 5, need 19 for true")
     else:
-        print("Test3 is correct for values are i = 19 and j = 4 and n = 4 and m = 5")
+        print("Test_if_I is correct for values are i = 19 and j = 4 and n = 4 and m = 5")
 
-
-def test4():
+def test_randomstep():
 
     size_n = 4
     size_m = 5
@@ -102,19 +96,18 @@ def test4():
     (i1,j) = randomstep(hashtable,i1,size_n,size_m)
     
     if i1 == 12 and j == 4:
-        print('Test4 is correct for values are i = 7, n = 4, m = 5 and blocks(2,6,8) are not empty')
+        print('Test_randomstep is correct for values are i = 7, n = 4, m = 5 and blocks(2,6,8) are not empty')
     else:
-        print("Test4 is not correct")
+        print("Test_randomstep is not correct")
 
     (i2,j) = randomstep(hashtable,i2,size_n,size_m)
 
     if (i2 == 0 and j == 1) or (i2 == 2 and j == 3):
-        print('Test4 is correct for values are i = 1, n = 4, m = 5 and blocks(6) are not empty')
+        print('Test_randomstep is correct for values are i = 1, n = 4, m = 5 and blocks(6) are not empty')
     else:
-        print('Test4 is not correct')
-
-        
-def test5():
+        print('Test_randomstep is not correct')
+    
+def test_randominfeik():
 
     hashtable = dict([(0,1),(2,3),(3,4),(1,7)])
     size_n = 2
@@ -122,12 +115,11 @@ def test5():
     i = randominfeik(hashtable,size_n,size_m)
 
     if (i == 1) or (i == 0) or (i == 2) or (i == 3):
-        print("Test5 is correct")
+        print("Test_randominfeik is correct")
     else:
-        print("Test5 is not correct")
+        print("Test_randominfeik is not correct")
 
-
-def test6():
+def test_brokwall():
 
     hashtable = dict([(6,11),(12,10),(8,11),(2,1),(7,11)])
 
@@ -139,50 +131,103 @@ def test6():
 
     hashtable = brok_wall(hashtable,size_n,size_m,i,j)
     if hashtable[i] == 1:
-        print("Test6 is correct")
+        print("Test_brokwall is correct")
     else:
-        print("Test6 is not correct")
+        print("Test_brokwall is not correct")
 
     j = 4
     hashtable = brok_wall(hashtable,size_n,size_m,i,j)
     if hashtable[i-size_m] == 0:
-        print("Test6 is correct")
+        print("Test_brokwall is correct")
     else:
-        print("Test6 is not correct")
+        print("Test_brokwall is not correct")
 
-
-def test7():
+def test_outport():
     hashtable = dict([(6,0),(7,0),(10,0),(102,0)])
+    
     outport("Exit.txt",hashtable)
     p = open("Exit.txt",'r',encoding = 'utf-8')
+    
     strok = p.read()
     hashtable = str(hashtable)
     
     if strok == hashtable:
-        print('Test7 is great')
+        print('Test_outport is great')
     else:
-        print('Test7 is bad')
+        print('Test_outport is bad')
 
+def test_generate_lab_step_one():
+    
+    hashtable = dict([(3,1),(4,1),(5,1),(7,1),(8,1),(9,1),(11,1),(12,1),(13,1),(0,11),(1,11),(2,11),(15,11),(6,11),(10,11),(14,11)])
+    hashtable_posetil = dict([(3,1),(4,1),(5,1),(7,1),(8,1),(9,1),(11,1),(12,1),(13,1)])
+    hashtable_ne_posetil = dict([(0,1),(1,1),(2,1),(15,1),(6,1),(10,1),(14,1)])
+    
+    size_n = 4
+    size_m = 4
+    
+    (hashtable,hashtable_posetil,hashtable_ne_posetil) = generate_lab_step_one(hashtable,hashtable_posetil,hashtable_ne_posetil,size_n,size_m)
+    test_hashtable = dict([(3,1),(4,1),(5,1),(7,1),(8,1),(9,1),(11,1),(12,1),(13,1),(0,1),(1,1),(2,10),(15,11),(6,10),(10,10),(14,1)])
+    if hashtable == test_hashtable:
+        print('Test_generate_lab_step_one is correct')
+    else:
+        print('Test is not correct')
+    
+def test_vypystit():
 
-def test8():
-    hashtable = dict([(0,0),(1,0),(2,10),(3,0),(4,0),(5,10)])
-    size_n = 2
+    i = 3
+    j = 3
+    size_m = 4
+    labirint_ne_posetil = dict([(0,1),(1,1),(2,1)])
+    labirint_posetil = dict([(0,1),(1,1)])
+    test_hashtable_ne_posetil = dict([(0,1),(1,1)])
+    test_hashtable_posetil = dict([(0,1),(1,1),(2,1)])
+    
+    
+    (labirint_ne_posetil,labirint_posetil) = vypystit(i,j,labirint_ne_posetil,size_m,labirint_posetil)
+    if labirint_ne_posetil == test_hashtable_ne_posetil and labirint_posetil ==  test_hashtable_posetil:
+        print('Test vypystit is correct')
+    else:
+        print('Test vypystit is not correct')
+
+def test_check_soseda():
+    
+    size_n = 3
     size_m = 3
-    hashtable = check_na_last(hashtable,size_n,size_m)
-    print(hashtable)
 
+    i = 4
+    j = 0
+    
+    hashtable = dict([(5,1),(7,1)])
+    labirint_ne_posetil = dict([(1,1),(3,1)])
+
+    (i,j) = check_soseda(hashtable,size_n,size_m,i,labirint_ne_posetil)
+    if i == 5 and j == 3 or i == 7 and j == 4:
+        print(i)
+        print('Test_check_soseda is correct')
+    else:
+        print('Test_check_soseda is not correct')
 
 def main():
 
+    test_port()
     
-    test1()
-    test2()
-    test3()
-    test4()
-    test5()
-    test6()
-    test7()
-    test8()
+    test_kolvo()
+    
+    test_if_I()
+    
+    test_randomstep()
+    
+    test_randominfeik()
+    
+    test_brokwall()
+    
+    test_outport()
+    
+    test_generate_lab_step_one()
+
+    test_vypystit()
+
+    test_check_soseda()
 
 
 
