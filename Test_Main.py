@@ -202,10 +202,30 @@ def test_check_soseda():
 
     (i,j) = check_soseda(hashtable,size_n,size_m,i,labirint_ne_posetil)
     if i == 5 and j == 3 or i == 7 and j == 4:
-        print(i)
         print('Test_check_soseda is correct')
     else:
         print('Test_check_soseda is not correct')
+
+def test_step3():
+
+    labirint_main = dict([(0,1),(1,10),(2,11),(3,1),(4,0),(5,11),(6,1),(7,1),(8,11)])
+
+    labirint_posetil = dict([(0,1),(1,1),(3,1),(4,1),(5,1),(6,1),(7,1),(8,1)])
+
+    labirint_ne_posetil = dict([(2,1)])
+
+    size_n = 3
+    size_m = 3
+
+    test_labirint_main1 = dict([(0,1),(1,0),(2,11),(3,1),(4,0),(5,11),(6,1),(7,1),(8,11)])
+    test_labirint_main2 = dict([(0,1),(1,10),(2,10),(3,1),(4,0),(5,11),(6,1),(7,1),(8,11)])
+
+    labirint_main = step_3(labirint_main,labirint_posetil,labirint_ne_posetil,size_n,size_m)
+    print(labirint_main)
+    if labirint_main == test_labirint_main1 or labirint_main == test_labirint_main2:
+        print('Test_step3 is correct')
+    else:
+        print('Test_step3 is not correct')
 
 def main():
 
@@ -228,6 +248,8 @@ def main():
     test_vypystit()
 
     test_check_soseda()
+
+    test_step3()
 
 
 
